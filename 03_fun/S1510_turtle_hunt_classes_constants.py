@@ -73,16 +73,42 @@ Kun hvis du er nysgerrig og elsker detaljer:
     Her er den fulde dokumentation for skildpaddegrafikken:
     https://docs.python.org/3.3/library/turtle.html"""
 
+import math
 import turtle  # this imports a library called "turtle". A library is (someone else's) python code, that you can use in your own program.
 import random
 from S1520_turtle_hunt_service import distance, direction
 
+MAX_POS = 300
 
-class PlayerName1(turtle.Turtle):
+class Bob(turtle.Turtle):
+
+    prey_orientation = 0
+    prey_last_position = [0, 0]
+    prey_orientation_vector = []
 
     def __init__(self):
         super().__init__()  # Here, this is equivalent to turtle.Turtle.__init__(self)
         self.orientation = 0  # used to keep track of the turtle's current orientation (the direction it is heading)
+
+    def find_hunter_closets(self, positions):
+        closest = -1
+        currdist = 10000
+        for i in range(1, len(positions)):
+            dist = distance(positions[0], positions[i])
+            if dist < currdist:
+                closest = i
+                currdist = dist
+        return closest
+
+    def get_hunter_dists(self, positions):
+        dists = []
+        for i in range(1, len(positions)):
+            dists.append(distance(positions[0], positions[i]))
+        return dists
+
+    def angle_vec_to(self):
+        radians = math.radians(self.orientation)
+        return [math.cos(radians), math.sin(radians)]
 
     def rotate_prey(self, positions):  # turtle will be turned right <degree> degrees. Use negative values for left turns.
         # self: the turtle that shall be rotated
@@ -94,7 +120,21 @@ class PlayerName1(turtle.Turtle):
         # Example for use of the service functions distance() and direction
         # print(f'{distance(positions[0], positions[1])=}   {direction(positions[0], positions[1])=}')  # print distance and direction from prey to hunter1
 
-        degree = 3  # When the turtle rotates the same amount each turn,  it will just run in a circle. Make this function smarter!
+        degree = 0
+        currscaredof = self.find_hunter_closets(positions)
+
+        hdir = direction(self.position(), positions[currscaredof])
+        degree = hdir + 180
+        degree -= self.orientation
+
+        # steer away from wall
+        nextpos = [self.pos()[0] + self.angle_vec_to()[0] * STEP_SIZE,
+                   self.pos()[1] + self.angle_vec_to()[1] * STEP_SIZE]
+        if nextpos[0] > MAX_POS - 30:
+            bounce = nextpos
+            bounce[0] = self.position()[0]
+            degree = direction(self.pos(), bounce) - self.orientation
+
         self.orientation += degree
         self.orientation %= 360
         # print(self.orientation)
@@ -103,7 +143,28 @@ class PlayerName1(turtle.Turtle):
     def rotate_hunter(self, positions):  # turtle will be turned right <degree> degrees. Use negative values for left turns.
         # Example for use of the service functions distance() and direction
         # print(f'{distance(self.position(), positions[0])=}   {direction(self.position(), positions[0])=}')  # print distance and direction from the current hunter to the prey
-        degree = -0.5  # When the turtle rotates the same amount each turn,  it will just run in a circle. Make this function smarter!
+
+        self.prey_orientation = direction(self.prey_last_position, positions[0])
+        self.prey_orientation_vector = positions[0] - self.prey_last_position # this isn't normalized (:
+        self.prey_last_position = positions[0]
+
+        degree = 0
+
+        closests = self.find_hunter_closets(positions)
+
+        # couldn't think of better way of doing this
+        if distance(positions[closests], self.position()) < 0.1:
+            degree = direction(self.position(), positions[0]) - self.orientation
+        elif True:
+            # should prop use the pythagorean theorem here, but i'll do it later
+            # or maybe not idk
+            degree = direction(self.position(), positions[0] + self.prey_orientation_vector * distance(self.position(), positions[0]))
+            degree -= self.orientation
+        else:
+            # todo make it go between the other two hunter turtles
+            # todo or maybe behind prey?
+            pass
+
         self.orientation += degree
         self.orientation %= 360
         # print(self.orientation)
@@ -119,6 +180,7 @@ class PlayerName1(turtle.Turtle):
 
 # change these global constants only for debugging purposes:
 MAX_TURNS = 100       # Maximum number of turns in a hunt.                           In competition: probably 200.
+#MAX_TURNS = 200       # Maximum number of turns in a hunt.                           In competition: probably 200.
 ROUNDS = 1            # Each player plays the prey this often.                       In competition: probably 10.
 STEP_SIZE = 3         # Distance each turtle moves in one turn.                      In competition: probably 3.
 SPEED = 0             # Fastest: 10, slowest: 1, max speed: 0.                       In competition: probably 0.
@@ -128,5 +190,5 @@ CAUGHT_DISTANCE = 10  # Hunt is over, when a hunter is nearer to the prey than t
 random.seed(2)  # use seed() if you want reproducible random numbers for debugging purposes. You may change the argument of seed().
 
 
-class1 = PlayerName1  # (red prey) Replace PlayerName1 by your own class name here.
-class2 = PlayerName1  # (green prey) For testing your code, replace PlayerName1 by your own class name here. Later replace this by your sparring partner's class name.
+class1 = Bob  # (red prey) Replace Bob by your own class name here.
+class2 = Bob  # (green prey) For testing your code, replace Bob by your own class name here. Later replace this by your sparring partner's class name.
