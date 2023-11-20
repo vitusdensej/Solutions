@@ -27,3 +27,33 @@ Send derefter denne Teams-meddelelse til din lærer: <filename> færdig
 Fortsæt derefter med den næste fil."""
 
 
+def inventory(num_rows):
+    numbers = []
+    currrow = []
+
+    for row in range(num_rows):
+        currrow = []
+        for n in range(9999):
+            count = count_number(numbers, n)
+            if n <= len(numbers):
+                numbers.append(count)
+                currrow.append(count)
+            if count == 0:
+                break
+
+        #print
+        for num in currrow:
+            print(f"{num} ", end='')
+        print()
+
+
+def count_number(numbers, num):
+    count = 0
+    for n in numbers:
+        if n == num:
+            #print(f"counted {num} with {n}")
+            count += 1
+    return count
+
+
+inventory(6)
