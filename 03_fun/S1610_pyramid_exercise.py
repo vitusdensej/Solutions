@@ -27,3 +27,42 @@ Hvis du ikke aner, hvordan du skal begynde, kan du åbne S1620_pyramid_help.py o
 Når dit program er færdigt, skal du skubbe det til dit github-repository.
 Send derefter denne Teams-meddelelse til din lærer: <filename> færdig
 Fortsæt derefter med den næste fil."""
+
+def pyramid(lines):
+    nums = [1, 1]
+    newnums = nums
+    for n in range(1, lines):
+        x = 0
+        for i in range(len(nums)):
+            if i < len(nums) - 1 and nums[i] + nums[i + 1] == n:
+                newnums.insert(i + 1 + x, n)
+                x += 1
+        nums = newnums.copy()
+
+        total = 0
+        print(f"{n}:  ", end='')
+        for num in nums:
+            print(f"{num} ", end='')
+            total += num
+        print(f"  {total}")
+
+def pyramid2(lines, firstline:list):
+    nums = firstline.copy()
+    newnums = nums
+    for n in range(1, lines):
+        x = 0
+        for i in range(len(nums)):
+            if i < len(nums) - 1 and nums[i] + nums[i + 1] == n:
+                newnums.insert(i + 1 + x, n)
+                x += 1
+        nums = newnums.copy()
+
+        total = 0
+        print(f"{n}:  ", end='')
+        for num in nums:
+            print(f"{num} ", end='')
+            total += num
+        print(f"  {total}")
+
+#pyramid(7)
+pyramid2(10, [2, 1, 2])

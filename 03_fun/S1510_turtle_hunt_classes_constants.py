@@ -106,9 +106,42 @@ class Bob(turtle.Turtle):
             dists.append(distance(positions[0], positions[i]))
         return dists
 
-    def angle_vec_to(self):
+    def get_hunter_index(self, positions):
+        for p in range(1, len(positions)):
+            if distance(positions[p], self.pos()) < 0.1:
+                return p
+
+    def get_hunter_dist_order(self, dists):
+        dlist = {}
+        for d in range(len(dists)):
+            dlist[d] = dists[d]
+        #print(dict(sorted(dlist.items(), key=lambda x:x[1], reverse=True)))
+        return dict(sorted(dlist.items(), key=lambda x:x[1], reverse=False))
+
+    def get_hunter_mydistorder(self, myindex, dists):
+        dict = self.get_hunter_dist_order(dists)
+        for d in range(len(dict.keys())):
+            if tuple(dict.keys())[d] == myindex - 1:
+                return d;
+        return -1
+
+    def angle_to_vec(self):
         radians = math.radians(self.orientation)
         return [math.cos(radians), math.sin(radians)]
+
+    def bounce_vec_off_wall(self, start, vec, wall_location, wall_axis):
+        disttowall = distance(start, wall_location)
+        newvec = [vec[0], vec[1]]
+        # idk if this is correct math wise
+        #newvec[0] -= disttowall
+        #newvec[1] -= disttowall
+        if wall_axis == 0: # up down
+            newvec[0] *= -1
+        else: # right left
+            newvec[1] *= -1
+        return wall_location # todo make this function work lol
+        return [newvec[0] + start[0], newvec[1] + start[1]]
+
 
     def rotate_prey(self, positions):  # turtle will be turned right <degree> degrees. Use negative values for left turns.
         # self: the turtle that shall be rotated
@@ -128,8 +161,8 @@ class Bob(turtle.Turtle):
         degree -= self.orientation
 
         # steer away from wall
-        nextpos = [self.pos()[0] + self.angle_vec_to()[0] * STEP_SIZE,
-                   self.pos()[1] + self.angle_vec_to()[1] * STEP_SIZE]
+        nextpos = [self.pos()[0] + self.angle_to_vec()[0] * STEP_SIZE,
+                   self.pos()[1] + self.angle_to_vec()[1] * STEP_SIZE]
         if nextpos[0] > MAX_POS - 30:
             bounce = nextpos
             bounce[0] = self.position()[0]
@@ -150,25 +183,38 @@ class Bob(turtle.Turtle):
 
         degree = 0
 
-        closests = self.find_hunter_closets(positions)
+        #closests = self.find_hunter_closets(positions)
+        hunter_dists = self.get_hunter_dists(positions)
+        myindex = self.get_hunter_index(positions)
+        mydistorder = self.get_hunter_mydistorder(myindex, hunter_dists)
 
-        # couldn't think of better way of doing this
-        if distance(positions[closests], self.position()) < 0.1:
-            degree = direction(self.position(), positions[0]) - self.orientation
-        elif True:
+        #print(mydistorder)
+
+        if mydistorder == 0:
+            degree = self.hunter_directchase(positions)
+        elif mydistorder == 1:
             # should prop use the pythagorean theorem here, but i'll do it later
             # or maybe not idk
-            degree = direction(self.position(), positions[0] + self.prey_orientation_vector * distance(self.position(), positions[0]))
-            degree -= self.orientation
+            degree = self.hunter_chaseahead(positions)
         else:
-            # todo make it go between the other two hunter turtles
-            # todo or maybe behind prey?
-            pass
+            degree = self.hunter_chasebehind(positions)
 
         self.orientation += degree
         self.orientation %= 360
         # print(self.orientation)
         return degree
+
+    def hunter_directchase(self, positions):
+        return direction(self.position(), positions[0]) - self.orientation
+
+    def hunter_chaseahead(self, positions):
+        prey_future_pos = positions[0] + self.prey_orientation_vector * distance(self.position(), positions[0])
+        prey_future_pos_true = self.bounce_vec_off_wall(positions[0], prey_future_pos, [MAX_POS, 0], 0)
+
+        return direction(self.position(), prey_future_pos_true) - self.orientation
+
+    def hunter_chasebehind(self, positions):
+        return direction(self.pos(), positions[0] + self.prey_orientation_vector * -25) - self.orientation
 
 
 #  Insert the code of your sparring partner's turtle class here:
