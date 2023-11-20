@@ -39,15 +39,16 @@ while(True):
     numsguesses += 1
     blackcoin = 0
     whitecoin = 0
-    alreadycountedindex = []
+    #alreadycountedindex = []
     guess = input("Guess a number ")
     for i in range(len(guess)):
         for j in range(len(number)):
             if guess[i] == number[j]:
                 if i == j:
                     blackcoin += 1
-                    alreadycountedindex.append(j)
-                elif j not in alreadycountedindex:
+                    #alreadycountedindex.append(j)
+                #elif j not in alreadycountedindex:
+                else:
                     whitecoin += 1
     if blackcoin == 4:
         break
