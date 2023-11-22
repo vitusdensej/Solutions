@@ -80,11 +80,25 @@ from S1520_turtle_hunt_service import distance, direction
 
 MAX_POS = 300
 
+def normalize(vec):
+    length = math.sqrt(vec[0] * vec[0] + vec[1] * vec[1])
+    return [vec[0] / length, vec[1] / length]
+
+
+class PreyHunterInfo:
+    index = -1
+    last_position = [0,0]
+    orientation = [0,0]
+    distance_toprey = 0
+
+
 class Bob(turtle.Turtle):
 
     prey_orientation = 0
     prey_last_position = [0, 0]
     prey_orientation_vector = []
+
+    preyhunter_info = [PreyHunterInfo(), PreyHunterInfo(), PreyHunterInfo()]
 
     def __init__(self):
         super().__init__()  # Here, this is equivalent to turtle.Turtle.__init__(self)
@@ -153,6 +167,14 @@ class Bob(turtle.Turtle):
         # Example for use of the service functions distance() and direction
         # print(f'{distance(positions[0], positions[1])=}   {direction(positions[0], positions[1])=}')  # print distance and direction from prey to hunter1
 
+        for i in range(1, len(positions)):
+            x = self.preyhunter_info[i - 1].last_position[0] - positions[i][0]
+            y = self.preyhunter_info[i - 1].last_position[1] - positions[i][1]
+            self.preyhunter_info[i - 1].orientation = normalize([x, y])
+            self.preyhunter_info[i - 1].last_position = positions[i]
+            self.preyhunter_info[i - 1].dist_toprey = distance(positions[0], positions[i])
+            self.preyhunter_info[i - 1].index = i - 1
+
         degree = 0
         currscaredof = self.find_hunter_closets(positions)
 
@@ -161,12 +183,12 @@ class Bob(turtle.Turtle):
         degree -= self.orientation
 
         # steer away from wall
-        nextpos = [self.pos()[0] + self.angle_to_vec()[0] * STEP_SIZE,
+        """nextpos = [self.pos()[0] + self.angle_to_vec()[0] * STEP_SIZE,
                    self.pos()[1] + self.angle_to_vec()[1] * STEP_SIZE]
         if nextpos[0] > MAX_POS - 30:
             bounce = nextpos
             bounce[0] = self.position()[0]
-            degree = direction(self.pos(), bounce) - self.orientation
+            degree = direction(self.pos(), bounce) - self.orientation"""
 
         self.orientation += degree
         self.orientation %= 360
@@ -225,8 +247,8 @@ class Bob(turtle.Turtle):
 
 
 # change these global constants only for debugging purposes:
-MAX_TURNS = 100       # Maximum number of turns in a hunt.                           In competition: probably 200.
-#MAX_TURNS = 200       # Maximum number of turns in a hunt.                           In competition: probably 200.
+#MAX_TURNS = 100       # Maximum number of turns in a hunt.                           In competition: probably 200.
+MAX_TURNS = 200       # Maximum number of turns in a hunt.                           In competition: probably 200.
 ROUNDS = 1            # Each player plays the prey this often.                       In competition: probably 10.
 STEP_SIZE = 3         # Distance each turtle moves in one turn.                      In competition: probably 3.
 SPEED = 0             # Fastest: 10, slowest: 1, max speed: 0.                       In competition: probably 0.
