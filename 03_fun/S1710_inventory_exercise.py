@@ -56,4 +56,4 @@ def count_number(numbers, num):
     return count
 
 
-inventory(6)
+inventory(16)
