@@ -28,6 +28,16 @@ def clear_all_entries():
     destentry.delete(0, tk.END)
     Wentry.delete(0, tk.END)
 
+
+def append_entry(info):
+    count = 0
+    if count % 2 == 0:
+        tree_view.insert()
+    else:
+        tree_view.insert()
+    count += 1
+
+
 padx = 15
 pady = 5
 
@@ -66,6 +76,9 @@ tree_view.heading("#0", text="", anchor=tk.W) # Create treeview column headings
 tree_view.heading("id", text="id", anchor=tk.CENTER)
 tree_view.heading("weight", text="weight", anchor=tk.CENTER)
 tree_view.heading("destination", text="destination", anchor=tk.CENTER)
+
+tree_view.tag_configure("evenrow", background="#444444")
+tree_view.tag_configure("oddrow", background="#555555")
 
 # ==== labels and entries ====
 
