@@ -28,7 +28,7 @@ def clear_all_entries():
     destentry.delete(0, tk.END)
     Wentry.delete(0, tk.END)
 
-
+s
 def append_entry(info):
     count = 0
     if count % 2 == 0:
