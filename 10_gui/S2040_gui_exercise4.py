@@ -28,14 +28,32 @@ def clear_all_entries():
     destentry.delete(0, tk.END)
     Wentry.delete(0, tk.END)
 
+append_entry_count = 0
+
 
 def append_entry(info):
-    count = 0
-    if count % 2 == 0:
-        tree_view.insert()
+    global append_entry_count
+
+    if append_entry_count % 2 == 0:
+        tree_view.insert(parent='', index='end', text='', values=info, tags=('evenrow',))
     else:
-        tree_view.insert()
-    count += 1
+        tree_view.insert(parent='', index='end', text='', values=info, tags=('oddrow',))
+    append_entry_count += 1
+
+
+def copy_info(info):
+    selected_iid = tree_view.focus()
+    selected_item = tree_view.item(selected_iid)
+    values = selected_item["values"]
+
+    entry.delete(0, tk.END)
+    entry.insert(0, values[0])
+
+    weight.delete(0, tk.END)
+    weight.insert(0, values[1])
+
+    destentry.delete(0, tk.END)
+    destentry.insert(0, values[2])
 
 
 padx = 15
@@ -48,9 +66,9 @@ main_window.geometry("500x700")
 # ==== tree view and scroll bar ====
 
 rowheight = 24
-treeview_background = "#eeeeee"
-treeview_foreground = "black"
-treeview_selected = "#773333"
+treeview_background = "#cccccc"
+treeview_foreground = "#bbbbbb"
+treeview_selected = "#663333"
 
 style = ttk.Style()
 style.theme_use('default')
@@ -64,6 +82,7 @@ tree_view_scroll_bar = tk.Scrollbar(dataframe)
 tree_view_scroll_bar.grid(row=5, column=6, padx=0, pady=pady, sticky='ns')
 tree_view = ttk.Treeview(dataframe, yscrollcommand=tree_view_scroll_bar.set, selectmode="browse")
 tree_view.grid(row=5, column=5, padx=padx, pady=pady)
+tree_view.bind("<<TreeviewSelect>>", copy_info)
 tree_view_scroll_bar.config(command=tree_view.yview)
 
 tree_view["columns"] = ("id", "weight", "destination")
@@ -77,8 +96,8 @@ tree_view.heading("id", text="id", anchor=tk.CENTER)
 tree_view.heading("weight", text="weight", anchor=tk.CENTER)
 tree_view.heading("destination", text="destination", anchor=tk.CENTER)
 
-tree_view.tag_configure("evenrow", background="#444444")
-tree_view.tag_configure("oddrow", background="#555555")
+tree_view.tag_configure("evenrow", background="#333333")
+tree_view.tag_configure("oddrow", background="#444444")
 
 # ==== labels and entries ====
 
@@ -129,8 +148,14 @@ button2.grid(row=3, column=3, padx=padx, pady=pady)
 button3 = tk.Button(button_frame, text="Clear Entry Boxes", command=clear_all_entries)
 button3.grid(row=3, column=4, padx=padx, pady=pady)
 
-tree_view.insert(parent="", index='end', text="test", values=("test1", "test2", 1000), tags=("evenrow"))
-tree_view.insert(parent="", index='end', text="test2", values="record", tags=("evenrow"))
+#tree_view.insert(parent="", index='end', text="test", values=("test1", "test2", 1000), tags=("evenrow"))
+#tree_view.insert(parent="", index='end', text="test2", values="record", tags=("evenrow"))
+#append_entry(("test", 1, 2))
+#append_entry(("test2", 3, 4))
+append_entry((1, 1000, "oslo"))
+append_entry((2, 2000, "chicago"))
+append_entry((3, 3000, "milano"))
+append_entry((4, 4000, "amsterdam"))
 
 if __name__ == "__main__":
     main_window.mainloop()
