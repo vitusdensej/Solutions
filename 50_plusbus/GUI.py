@@ -26,7 +26,7 @@ def create_tree_view(col, fields, select_command):
     tree_view.heading("#0", text="", anchor=tk.W)
 
     for f in fields:
-        tree_view.column(f, anchor=tk.E, width=12 * len(f))
+        tree_view.column(f, anchor=tk.E, width=15 * len(f)) # 12?
         tree_view.heading(f, text=f, anchor=tk.CENTER)
 
     return tree_view
@@ -64,3 +64,4 @@ refresh_button.grid(row=0, column=3)
 
 if __name__ == "__main__":
     main_window.mainloop()
+
