@@ -1,6 +1,8 @@
 import tkinter as tk
 from tkinter import ttk
 
+import Database
+
 main_window = tk.Tk()
 main_window.title("my first GUI")
 main_window.geometry("1500x700")
@@ -37,6 +39,14 @@ customer_view = create_tree_view(1, ("id", "last name", "contact"), _pass)
 route_view = create_tree_view(2, ("id", "start/end", "date", "seats"), _pass)
 reservation_view = create_tree_view(3, ("id", "customer id", "route id", "seats"), _pass)
 
+
+def refresh_tables():
+    customers = Database.read_all_customers()
+
+    for c in customers:
+        customer_view.insert(parent='', index='end', text='', values=c.to_tuple())
+
+
 button_frame = tk.LabelFrame(main_window)
 button_frame.grid(row=1, column=0)
 
@@ -48,6 +58,9 @@ update_button.grid(row=0, column=1)
 
 delete_button = tk.Button(button_frame, text="Delete")
 delete_button.grid(row=0, column=2)
+
+refresh_button = tk.Button(button_frame, text="Refresh", command=refresh_tables)
+refresh_button.grid(row=0, column=3)
 
 if __name__ == "__main__":
     main_window.mainloop()

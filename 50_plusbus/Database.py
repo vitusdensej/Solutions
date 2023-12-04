@@ -14,6 +14,9 @@ class Customer(Base):
     def __repr__(self):
         return f"id: {self.id}, last name: {self.last_name}, contact: {self.contact}"
 
+    def to_tuple(self):
+        return (self.id, self.last_name, self.contact)
+
 
 class Route(Base):
     __tablename__ = "routes"
@@ -63,6 +66,9 @@ def update_costumer(id, _last_name):
 
 def update_costumer(id, _contact):
     pass
+
+def read_all_customers():
+    return select_all(Customer)
 
 engine = create_engine(Database, echo=False, future=True)
 Base.metadata.create_all(engine)
