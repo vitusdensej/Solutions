@@ -1,9 +1,10 @@
 from sqlalchemy.orm import declarative_base, Session
 from sqlalchemy import Column, String, Integer
-from sqlalchemy import create_engine, select
+from sqlalchemy import create_engine, select, update
 
 Database = 'sqlite:///S2311_cool_database.db'  # first part: database type, second part: file path
 Base = declarative_base()
+
 
 class Customer(Base):
     __tablename__ = "customers"
@@ -33,7 +34,6 @@ class Reservation(Base):
     route_id = Column(Integer)
     seats = Column(Integer)
 
-
 def select_all(classparam):  # return a list of all records in classparams table
     with Session(engine) as session:
         records = session.scalars(select(classparam))
@@ -58,17 +58,20 @@ def create_costumer(_last_name, _contact):
 def delete_costumer(id):
     pass
 
+
 def update_costumer(id, _last_name, _contact):
-    pass
+    update(Customer).where(Customer.id == id).values(last_name=_last_name, contact=_contact)
 
-def update_costumer(id, _last_name):
-    pass
 
-def update_costumer(id, _contact):
-    pass
+#def update_costumer(id, _last_name):
+#    pass
+
+#def update_costumer(id, _contact):
+#    pass
 
 def read_all_customers():
     return select_all(Customer)
+
 
 engine = create_engine(Database, echo=False, future=True)
 Base.metadata.create_all(engine)

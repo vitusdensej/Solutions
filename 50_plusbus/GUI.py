@@ -13,6 +13,11 @@ pady = 0
 dataframe = tk.Frame(main_window)
 dataframe.grid(row=0, column=0)
 
+
+def gui_update_customer():
+    Database.update_costumer(0, last_name_field.get(), contact_field.get())
+
+
 def create_tree_view(col, fields, select_command):
     tree_view_scroll_bar = tk.Scrollbar(dataframe)
     tree_view_scroll_bar.grid(row=5, column=col, padx=0, pady=pady, sticky='ns')
@@ -40,8 +45,14 @@ route_view = create_tree_view(2, ("id", "start/end", "date", "seats"), _pass)
 reservation_view = create_tree_view(3, ("id", "customer id", "route id", "seats"), _pass)
 
 
+def empty_treeview(tree):
+    tree.delete(*tree.get_children())
+
+
 def refresh_tables():
     customers = Database.read_all_customers()
+
+    empty_treeview(customer_view)
 
     for c in customers:
         customer_view.insert(parent='', index='end', text='', values=c.to_tuple())
@@ -53,7 +64,7 @@ button_frame.grid(row=1, column=0)
 create_button = tk.Button(button_frame, text="Create")
 create_button.grid(row=0, column=0)
 
-update_button = tk.Button(button_frame, text="Update")
+update_button = tk.Button(button_frame, text="Update", command=gui_update_customer)
 update_button.grid(row=0, column=1)
 
 delete_button = tk.Button(button_frame, text="Delete")
@@ -61,6 +72,12 @@ delete_button.grid(row=0, column=2)
 
 refresh_button = tk.Button(button_frame, text="Refresh", command=refresh_tables)
 refresh_button.grid(row=0, column=3)
+
+last_name_field = tk.Entry(button_frame)
+last_name_field.grid(row=2, column=0)
+
+contact_field = tk.Entry(button_frame)
+contact_field.grid(row=2, column=1)
 
 if __name__ == "__main__":
     main_window.mainloop()
