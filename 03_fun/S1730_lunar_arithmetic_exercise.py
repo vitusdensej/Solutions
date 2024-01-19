@@ -49,9 +49,31 @@ class Lunar_int:
         return result + o * i
 
     def __mul__(self, other):
-        pass
+        result = 0
+        subresults = []
+
+        v = self.value
+        o = other
+
+        currresult = 0
+        i = 1
+        j = 1
+        while v > 0:
+            while o > 0:
 
 
-li = Lunar_int(557)
+                o //= 10
+                j *= 10
 
-print(li + 1166)
+            o = other
+            j = 1
+
+            v //= 10
+            i *= 10
+
+        return result
+
+
+li = Lunar_int(66)
+
+print(li * 55)
