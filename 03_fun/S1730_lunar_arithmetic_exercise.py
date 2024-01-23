@@ -75,7 +75,6 @@ class Lunar_int:
             i *= 10
 
         for sr in subresults:
-            print(type(result), type(sr))
             result += sr
 
         return result
