@@ -83,6 +83,29 @@ class Lunar_int:
         return f"{self.value}"
 
 
-li = Lunar_int(66)
+def calc_lunar_primes(n):
+    results = []
 
-print(li * 55)
+    i = 0
+    while len(results) < n:
+        isi = True
+
+        for x in range(i):
+            for y in range(i):
+                if x == 9 or y == 9:
+                    continue
+
+                lx = Lunar_int(x)
+                if (lx * y).value == i:
+                    isi = False
+                    break
+
+        if isi:
+            results.append(i)
+
+        i += 1
+
+    print()
+    return results
+
+print(calc_lunar_primes(5))
