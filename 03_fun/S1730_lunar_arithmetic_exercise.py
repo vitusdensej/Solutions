@@ -33,6 +33,9 @@ class Lunar_int:
     def __init__(self, _value):
         self.value = _value
 
+    def __set__(self, instance, value):
+        instance.value = value
+
     def __add__(self, other):
         result = 0
 
@@ -46,21 +49,21 @@ class Lunar_int:
             o //= 10
             i *= 10
 
-        return result + o * i
+        return Lunar_int(result + o * i)
 
     def __mul__(self, other):
-        result = 0
+        result = Lunar_int(0)
         subresults = []
 
         v = self.value
         o = other
 
-        currresult = 0
         i = 1
         j = 1
         while v > 0:
             while o > 0:
-
+                r = min((v % 10), (o % 10)) * (i * j)
+                subresults.append(r)
 
                 o //= 10
                 j *= 10
@@ -71,7 +74,14 @@ class Lunar_int:
             v //= 10
             i *= 10
 
+        for sr in subresults:
+            print(type(result), type(sr))
+            result += sr
+
         return result
+
+    def __repr__(self):
+        return f"{self.value}"
 
 
 li = Lunar_int(66)
