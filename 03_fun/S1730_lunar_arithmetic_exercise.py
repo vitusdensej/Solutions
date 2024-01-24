@@ -88,24 +88,23 @@ def calc_lunar_primes(n):
 
     i = 0
     while len(results) < n:
-        isi = True
+        add_i = True
 
-        for x in range(i):
-            for y in range(i):
-                if x == 9 or y == 9:
-                    continue
+        for x in range(i + 1):
+            for y in range(i + 1):
+                if (Lunar_int(x) * y).value == i:
+                    if x == 9 or y == 9:
+                        continue
 
-                lx = Lunar_int(x)
-                if (lx * y).value == i:
-                    isi = False
+                    add_i = False
                     break
 
-        if isi:
+        if add_i and i not in results:
+            print(f"found {i} {len(results)}")  # so when its calculating large numbers it doesn't look like its hanging
             results.append(i)
 
         i += 1
 
-    print()
     return results
 
-print(calc_lunar_primes(5))
+print(calc_lunar_primes(20))
