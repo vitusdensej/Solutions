@@ -15,7 +15,8 @@ dataframe.grid(row=0, column=0)
 
 
 def gui_update_customer():
-    Database.update_costumer(0, last_name_field.get(), contact_field.get())
+    Database.update_costumer(2, "test", "test@test.com")
+    Database.update_costumer(1, last_name_field.get(), contact_field.get())
 
 
 def create_tree_view(col, fields, select_command):
@@ -36,9 +37,11 @@ def create_tree_view(col, fields, select_command):
 
     return tree_view
 
+
 # placeholder function for commands
-def _pass():
+def _pass(arg):
     pass
+
 
 customer_view = create_tree_view(1, ("id", "last name", "contact"), _pass)
 route_view = create_tree_view(2, ("id", "start/end", "date", "seats"), _pass)

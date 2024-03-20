@@ -58,7 +58,7 @@ def get_record(classparam, record_id):  # return the record in classparams table
 engine = create_engine(Database, echo=False, future=True)
 Base.metadata.create_all(engine)
 
-# print(select_all(Person))
-# print(Person.convert_from_tuple((12, "test", 17)))
+print(select_all(Person))
+print(Person.convert_from_tuple((12, "test", 17)))
 print(get_record(Person, 1))
 

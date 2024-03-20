@@ -55,12 +55,17 @@ def create_costumer(_last_name, _contact):
         session.add(new_costumer)
         session.commit()
 
+
 def delete_costumer(id):
     pass
 
 
 def update_costumer(id, _last_name, _contact):
-    update(Customer).where(Customer.id == id).values(last_name=_last_name, contact=_contact)
+    with Session(engine) as session:
+        session.execute(update(Customer).where(Customer.id == id).values(last_name=_last_name, contact=_contact))
+        session.commit()
+        print(_last_name, _contact)
+        print(get_record(Customer, id))
 
 
 #def update_costumer(id, _last_name):
